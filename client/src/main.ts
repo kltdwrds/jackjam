@@ -1,19 +1,32 @@
 import { app, BrowserWindow } from "electron";
-import * as path from "path";
+import * as path from 'path'
+import { format as formatUrl } from 'url'
+
+const isDevelopment = process.env.NODE_ENV !== 'production'
+
+// global reference to mainWindow (necessary to prevent window from being garbage collected)
+let mainWindow
 
 function createWindow() {
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     height: 600,
     webPreferences: { nodeIntegration: true },
     width: 800,
   });
 
-  // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, "index.html"));
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if (isDevelopment) {
+    mainWindow.webContents.openDevTools()
+  }
+  if (isDevelopment) {
+    mainWindow.loadURL(`http://localhost:3000/index.html`)
+  }
+  else {
+    mainWindow.loadURL(formatUrl({
+      pathname: path.join(__dirname, 'index.html'),
+      protocol: 'file',
+      slashes: true
+    }))
+  }
 }
 
 // This method will be called when Electron has finished
