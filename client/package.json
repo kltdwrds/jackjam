@@ -1,0 +1,27 @@
+{
+  "name": "jackjam-client",
+  "version": "0.0.1",
+  "description": "Jam from your bedroom",
+  "scripts": {
+    "build": "webpack",
+    "watch": "tsc -w",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "start": "npm run build && electron ./dist/main.js"
+  },
+  "repository": "https://github.com/kltdwrds/jackjam",
+  "keywords": [],
+  "author": "Kyle",
+  "devDependencies": {
+    "@types/react": "^16.9.46",
+    "@types/react-dom": "^16.9.8",
+    "electron": "^9.0.4",
+    "html-webpack-plugin": "^4.3.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "ts-loader": "^8.0.2",
+    "tslint": "^6.1.2",
+    "typescript": "^3.9.5",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  }
+}
