@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { execFile, ChildProcess } from "child_process";
+import useResourcePath from './useResourcePath';
 import fs from "fs"
 import { homedir } from "os";
 
@@ -8,7 +9,7 @@ const App = () => {
   const [serverIP, setServerIP] = useState("");
   const [child, setChild] = useState<ChildProcess | null>(null);
 
-  const connect = () => {
+  const connect = (): void => {
     // const jackdConfig = "/usr/local/bin/jackd -dcoreaudio -r48000 -p256";
     // fs.writeFile(`${homedir()}/.jackdrc`, jackdConfig, function(err) {
     //   if(err) {
@@ -16,8 +17,17 @@ const App = () => {
     //   }
     //   console.log("Config updated.");
     // });
-    console.log(serverIP)
-    const c = execFile("/usr/local/bin/jacktrip", [`-C${serverIP}`, "-n1", "-q8", "--rtaudio", "--bufsize=256"]);
+    const c = execFile(
+      useResourcePath("executables/jacktrip"), 
+      [`-C${serverIP}`, "-n1", "-q8", "--rtaudio", "--bufsize=256"],
+      (error, stdout, stderr) => {
+        if (error) {
+          throw error;
+        }
+        console.log(stdout);
+        console.log(stderr);
+      }
+    );
     setChild(c);
     c.stdout.setEncoding("utf-8");
     c.on("exit", () => {
@@ -31,6 +41,7 @@ const App = () => {
         c.kill()
       }
     });
+    c.stdout.on("error", (err) => console.log(err));
   };
 
   return (
