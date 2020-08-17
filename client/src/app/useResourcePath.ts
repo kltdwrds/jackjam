@@ -1,6 +1,6 @@
 import * as path from 'path'
 
-const isDevelopment = process.env.NODE_ENV !== 'production';
+const isDevelopment = process.env.APP_ENV === 'development';
 
 const useResourcePath = (relativePath: string): string => {
   if(isDevelopment){

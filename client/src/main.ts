@@ -1,8 +1,6 @@
 import { app, BrowserWindow } from "electron";
-import * as path from 'path'
-import { format as formatUrl } from 'url'
 
-const isDevelopment = process.env.NODE_ENV !== 'production'
+const isDevelopment = process.env.APP_ENV === 'development'
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow
@@ -15,17 +13,12 @@ function createWindow() {
   });
 
   if (isDevelopment) {
-    mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools();
   }
   if (isDevelopment) {
-    mainWindow.loadURL(`http://localhost:3000/index.html`)
-  }
-  else {
-    mainWindow.loadURL(formatUrl({
-      pathname: path.join(__dirname, 'index.html'),
-      protocol: 'file',
-      slashes: true
-    }))
+    mainWindow.loadURL(`http://localhost:3000/index.html`);
+  } else {
+    mainWindow.loadFile('dist/index.html');
   }
 }
 

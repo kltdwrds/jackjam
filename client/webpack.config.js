@@ -4,16 +4,17 @@ const {spawn} = require('child_process');
 const { merge } = require('webpack-merge');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const DotenvWebpackPlugin = require("dotenv-webpack");
 
 var DIST_DIR = path.resolve(__dirname, 'dist');
 var SRC_DIR = path.resolve(__dirname, 'src');
 
 module.exports = (env, argv) => {
   const mode = argv.mode
-
+  const productionBuild = mode === 'production';
   const base = {
     mode: mode,
-    devtool: mode === 'production' ? 'source-map' : 'eval-source-map',
+    devtool: productionBuild ? 'source-map' : 'eval-source-map',
     resolve: {
       alias: {
         ['@']: SRC_DIR
@@ -31,7 +32,7 @@ module.exports = (env, argv) => {
       path: DIST_DIR,
     },
     plugins: [
-      new webpack.EnvironmentPlugin("APP_ENV")
+      new DotenvWebpackPlugin({path: productionBuild ? "./.env.production" : "./.env"})
     ],
     devServer: {
       contentBase: DIST_DIR,
