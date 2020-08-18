@@ -12,9 +12,7 @@ function createWindow() {
     width: 800,
   });
 
-  if (isDevelopment) {
-    mainWindow.webContents.openDevTools();
-  }
+  mainWindow.webContents.openDevTools();
   if (isDevelopment) {
     mainWindow.loadURL(`http://localhost:3000/index.html`);
   } else {
