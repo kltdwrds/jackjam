@@ -22,11 +22,24 @@ module.exports = (env, argv) => {
       extensions: ['.tsx', '.ts', '.js'],
     },
     module: {
-      rules: [{
-        test: /\.ts(x?)$/,
-        include: /src/,
-        use: [{ loader: 'ts-loader' }]
-      }]
+      rules: [
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.ts(x?)$/,
+          exclude: /node_modules/,
+          loader: "babel-loader",
+        },
+        // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
+        {
+          enforce: "pre",
+          test: /\.js$/,
+          loader: "source-map-loader",
+          exclude: []
+        }
+      ]
     },
     output: {
       path: DIST_DIR,

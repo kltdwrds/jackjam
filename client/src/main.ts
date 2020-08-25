@@ -1,11 +1,11 @@
 import { app, BrowserWindow } from "electron";
 
-const isDevelopment = process.env.APP_ENV === 'development'
+const isDevelopment = process.env.APP_ENV === "development";
 
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
-let mainWindow
+let mainWindow;
 
-function createWindow() {
+function createWindow(): void {
   mainWindow = new BrowserWindow({
     height: 600,
     webPreferences: { nodeIntegration: true },
@@ -16,7 +16,7 @@ function createWindow() {
   if (isDevelopment) {
     mainWindow.loadURL(`http://localhost:3000/index.html`);
   } else {
-    mainWindow.loadFile('dist/index.html');
+    mainWindow.loadFile("dist/index.html");
   }
 }
 
@@ -26,7 +26,7 @@ function createWindow() {
 app.on("ready", () => {
   createWindow();
 
-  app.on("activate", function () {
+  app.on("activate", () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
