@@ -17,7 +17,9 @@
       {
         "from": "resources",
         "to": "",
-        "filter": ["**/*"]
+        "filter": [
+          "**/*"
+        ]
       }
     ],
     "appId": "com.jackjam",
@@ -54,5 +56,8 @@
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0",
     "webpack-merge": "^5.1.1"
+  },
+  "dependencies": {
+    "react-hook-form": "^6.4.1"
   }
 }
