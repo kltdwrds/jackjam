@@ -1,3 +1,12 @@
+import {
+  Button,
+  Code,
+  Collapse,
+  Container,
+  Heading,
+  Text,
+  useDisclosure,
+} from "@chakra-ui/core";
 import { ChildProcess, execFile } from "child_process";
 import React, { useEffect, useState } from "react";
 
@@ -6,70 +15,85 @@ import { writeJackConfig } from "../utils/writeJackConfig";
 import ConfigForm, { FormData } from "./ConfigForm";
 
 const Home: React.FC = () => {
-  const [logs, setLogs] = useState("");
-  const [child, setChild] = useState<ChildProcess>();
+  const [logs, setLogs] = useState<string[]>([]);
+  const { isOpen, onToggle } = useDisclosure();
+  const [jacktrip, setJacktrip] = useState<ChildProcess>();
   const jacktripPath = useResourcePath("executables/jacktrip");
 
   const connect = (formData: FormData): void => {
     const {
-      serverIP,
+      server,
       samplingRate,
       bufferSize,
       queueBufferLength,
       channels,
       portOffset,
     } = formData;
+
     writeJackConfig(samplingRate, bufferSize);
-    const args = [`-C${serverIP}`, `-n${channels}`, `-q${queueBufferLength}`];
+
+    const args = [`-C${server}`, `-n${channels}`, `-q${queueBufferLength}`];
     if (portOffset) {
       args.push(`-o${portOffset}`);
     }
 
-    const c = execFile(jacktripPath, args, (error, stdout, stderr) => {
+    const jt = execFile(jacktripPath, args, (error) => {
       if (error) {
         throw error;
       }
-      console.log(stdout);
-      console.log(stderr);
     });
-
-    setChild(c);
-    c?.stdout?.setEncoding("utf-8");
-    c.on("exit", () => {
-      setChild(undefined);
-    });
-    c?.stdout?.on("error", (err) => console.log(err));
+    setJacktrip(jt);
   };
+
   useEffect(() => {
-    child?.stdout?.on("data", (data: string) => {
-      setLogs(`${data}\n\n${logs}`);
+    if (!jacktrip) {
+      return;
+    }
+    jacktrip.stdout?.setEncoding("utf-8");
+    jacktrip.stdout?.on("error", (err) => console.log(err));
+    jacktrip.stdout?.on("data", (data: string) => {
+      setLogs([data, ...logs]);
       console.log(data);
       if (data.includes("UDP WAITED MORE THAN")) {
-        child?.kill();
+        jacktrip?.kill();
       }
     });
-  });
+    jacktrip.on("exit", () => {
+      setJacktrip(undefined);
+    });
+  }, [jacktrip]);
+
   return (
-    <div style={{ backgroundColor: "white" }}>
-      <h1>JackJam</h1>
-      {child ? (
-        <button
-          type="button"
-          onClick={() => {
-            child?.kill();
-            setLogs("");
-          }}
-        >
-          Disconnect
-        </button>
-      ) : (
+    <Container>
+      <Heading as="h1" size="xl" my="4">
+        JackJam
+      </Heading>
+      {jacktrip ? (
         <>
-          <h2>Client jacktrip configuration</h2>
-          <ConfigForm onSubmit={connect} />
+          <Button
+            onClick={() => {
+              jacktrip?.kill();
+              setLogs([]);
+            }}
+          >
+            Disconnect
+          </Button>
+          <Button variant="ghost" size="xs" ml="4" onClick={onToggle}>
+            {isOpen ? "Hide" : "Show"} logs
+          </Button>
+          <Collapse animateOpacity isOpen={isOpen} mt="4">
+            <Code>
+              {logs.map((log, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <Text key={index}>{log}</Text>
+              ))}
+            </Code>
+          </Collapse>
         </>
+      ) : (
+        <ConfigForm onSubmit={connect} />
       )}
-      <div>{logs}</div>
-    </div>
+    </Container>
   );
 };
 

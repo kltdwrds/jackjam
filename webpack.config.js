@@ -1,4 +1,3 @@
-const webpack = require("webpack");
 const path = require('path');
 const {spawn} = require('child_process');
 const { merge } = require('webpack-merge');
@@ -7,7 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const DotenvWebpackPlugin = require("dotenv-webpack");
 
 var DIST_DIR = path.resolve(__dirname, 'dist');
-var SRC_DIR = path.resolve(__dirname, 'src');
+// var SRC_DIR = path.resolve(__dirname, 'src');
 
 module.exports = (env, argv) => {
   const mode = argv.mode
@@ -16,9 +15,6 @@ module.exports = (env, argv) => {
     mode: mode,
     devtool: productionBuild ? 'source-map' : 'eval-source-map',
     resolve: {
-      alias: {
-        ['@']: SRC_DIR
-      },
       extensions: ['.tsx', '.ts', '.js'],
     },
     module: {
@@ -37,7 +33,6 @@ module.exports = (env, argv) => {
           enforce: "pre",
           test: /\.js$/,
           loader: "source-map-loader",
-          exclude: []
         }
       ]
     },

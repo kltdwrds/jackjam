@@ -30,6 +30,7 @@ module.exports = {
     "eslint:recommended",
     "plugin:react/recommended",
     "plugin:import/electron",
+    "plugin:import/typescript",
     "eslint-config-airbnb-base",
     "eslint-config-airbnb/rules/react",
     "plugin:@typescript-eslint/eslint-recommended",
@@ -65,7 +66,6 @@ module.exports = {
       ]
     },
     "import/resolver": {
-      "typescript": {},
       node: {
         extensions: [
           ".js",

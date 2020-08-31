@@ -7,6 +7,7 @@
     "email": "edwards.ky1@gmail.com",
     "url": "https://github.com/kltdwrds"
   },
+  "browserslist": "Electron 9.2",
   "main": "dist/main.js",
   "build": {
     "files": [
@@ -48,8 +49,6 @@
     "@chakra-ui/core": "^1.0.0-rc.2",
     "@chakra-ui/system": "^1.0.0-rc.2",
     "@chakra-ui/theme": "^1.0.0-rc.2",
-    "@emotion/core": "^10.0.28",
-    "@emotion/styled": "^10.0.27",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-hook-form": "^6.4.1"

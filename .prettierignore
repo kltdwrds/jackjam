@@ -1,0 +1,23 @@
+# Google App Engine generated folder
+appengine-generated/
+
+# dependencies
+/node_modules
+
+# production
+/dist
+
+# misc
+.DS_Store
+
+npm-debug.log*
+
+.env
+.env.test
+
+# tmp dir
+/tmp
+
+.google-application-credentials.json
+
+schema.json
