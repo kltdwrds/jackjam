@@ -7,7 +7,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/core";
-import { ChildProcess, execFile } from "child_process";
+import { ChildProcess, execFile, execSync } from "child_process";
 import React, { useEffect, useState } from "react";
 
 import useResourcePath from "../hooks/useResourcePath";
@@ -35,6 +35,18 @@ const Home: React.FC = () => {
     const args = [`-C${server}`, `-n${channels}`, `-q${queueBufferLength}`];
     if (portOffset) {
       args.push(`-o${portOffset}`);
+    }
+
+    try {
+      execSync("killall jacktrip");
+    } catch (e) {
+      console.log(e);
+    }
+
+    try {
+      execSync("killall jackd");
+    } catch (e) {
+      console.log(e);
     }
 
     const jt = execFile(jacktripPath, args, (error) => {
