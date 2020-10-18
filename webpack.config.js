@@ -41,21 +41,7 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new DotenvWebpackPlugin({path: productionBuild ? "./.env.production" : "./.env"})
-    ],
-    devServer: {
-      contentBase: DIST_DIR,
-      writeToDisk: true,
-      port: 3000,
-      after() {
-        spawn(
-          'electron',
-          ['./dist/main.js'],
-          { shell: true, env: process.env, stdio: 'inherit' }
-        )
-        .on('close', code => process.exit(0))
-        .on('error', spawnError => console.error(spawnError))
-      }
-    }
+    ]
   }
 
   const electron = {
@@ -67,7 +53,7 @@ module.exports = (env, argv) => {
     output: {
       filename: 'main.js'
     },
-    plugins: [new CleanWebpackPlugin()]
+    plugins: [new CleanWebpackPlugin()],
   }
    
   const react = {
@@ -84,6 +70,20 @@ module.exports = (env, argv) => {
         template: './src/index.html'
       })
     ],
+    devServer: {
+      contentBase: DIST_DIR,
+      writeToDisk: true,
+      port: 3000,
+      after() {
+        spawn(
+          'electron',
+          ['./dist/main.js'],
+          { shell: true, env: process.env, stdio: 'inherit' }
+        )
+        .on('close', code => process.exit(0))
+        .on('error', spawnError => console.error(spawnError))
+      }
+    }
   }
   
   return [
