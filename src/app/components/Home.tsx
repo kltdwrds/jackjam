@@ -93,8 +93,8 @@ const Home: React.FC = () => {
           <Button variant="ghost" size="xs" ml="4" onClick={onToggle}>
             {isOpen ? "Hide" : "Show"} logs
           </Button>
-          <Collapse animateOpacity isOpen={isOpen} mt="4">
-            <Code>
+          <Collapse animateOpacity in={isOpen}>
+            <Code mt="4">
               {logs.map((log, index) => (
                 // eslint-disable-next-line react/no-array-index-key
                 <Text key={index}>{log}</Text>

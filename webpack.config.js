@@ -27,12 +27,18 @@ module.exports = (env, argv) => {
           test: /\.ts(x?)$/,
           exclude: /node_modules/,
           loader: "babel-loader",
+          resolve: {
+            fullySpecified: false
+          }
         },
         // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
         {
           enforce: "pre",
           test: /\.js$/,
           loader: "source-map-loader",
+          resolve: {
+            fullySpecified: false
+          }
         }
       ]
     },

@@ -1,0 +1,33 @@
+name: jacktrip
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "ref"
+        required: true
+        default: "master"
+
+jobs:
+  build:
+    runs-on: macos-10.15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          repository: kltdwrds/jackjam
+          ref: ${{ github.event.inputs.ref }}
+      - name: Use Node.js v12.10.0
+        uses: actions/setup-node@v1
+        with:
+          node-version: v12.10.0
+      - name: Install jackjam deps
+        run: |
+          npm install
+      - name: Build jackjam
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm run dist

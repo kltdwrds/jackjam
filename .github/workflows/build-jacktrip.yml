@@ -1,0 +1,36 @@
+name: jacktrip
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "jacktrip ref"
+        required: true
+        default: "main"
+
+jobs:
+  build:
+    runs-on: macos-10.15
+    steps:
+      - name: Install jacktrip deps
+        run: |
+          brew install qjackctl
+          brew install qt5
+          brew link qt5 --force
+      - name: Checkout jacktrip
+        uses: actions/checkout@v2
+        with:
+          repository: jacktrip/jacktrip
+          ref: ${{ github.event.inputs.ref }}
+      - name: Build jacktrip
+        run: |
+          cd ./src && ./build
+      - name: Mark executable
+        run: |
+          sudo chmod 755 ./builddir/jacktrip
+      - name: Upload jacktrip
+        uses: actions/upload-artifact@v2
+        with:
+          name: jacktrip
+          path: ./builddir/jacktrip
+          retention-days: 60
