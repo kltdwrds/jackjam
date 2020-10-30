@@ -9,14 +9,18 @@
 name: jacktrip
 
 on:
-  push:
-    branches: [kltdwrds-patch-1]
+  workflow_dispatch:
+    inputs:
+      jacktrip-branch:
+        description: "jacktrip branch"
+        required: true
+        default: "main"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Install deps
+      - name: Install jacktrip deps
         run: |
           sudo apt-get install -y --no-install-recommends build-essential librtaudio-dev qt5-default autoconf automake libtool make libjack-jackd2-dev qjackctl audacity git
       - name: Checkout code
@@ -35,10 +39,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: dev-${{ steps.timestamp.outputs.timestamp }}
-          release_name: Dev ${{ steps.timestamp.outputs.timestamp }}
-          draft: false
-          prerelease: false
+          tag_name: ${{ steps.timestamp.outputs.timestamp }}
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1.0.2
         env:
