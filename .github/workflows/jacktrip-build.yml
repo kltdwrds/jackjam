@@ -11,7 +11,7 @@ name: jacktrip
 on:
   workflow_dispatch:
     inputs:
-      jacktrip-branch:
+      ref:
         description: "jacktrip branch"
         required: true
         default: "main"
@@ -27,6 +27,7 @@ jobs:
         uses: actions/checkout@v2
         with: 
           repository: jacktrip/jacktrip
+          ref: ${{ github.event.inputs.ref }}
       - name: Build dist
         run: |
           cd ./src && ./build && pwd
