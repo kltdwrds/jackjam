@@ -1,0 +1,79 @@
+name: jacktrip
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "ref"
+        required: true
+        default: "master"
+      jacktrip-ref:
+        description: "jacktrip ref"
+        required: true
+        default: "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install jacktrip deps
+        run: |
+          sudo apt-get install -y --no-install-recommends build-essential librtaudio-dev qt5-default autoconf automake libtool make libjack-jackd2-dev qjackctl audacity git
+      - name: Checkout jacktrip
+        uses: actions/checkout@v2
+        with:
+          repository: jacktrip/jacktrip
+          ref: ${{ github.event.inputs.jacktrip-ref }}
+      - name: Build jacktrip
+        run: |
+          cd ./src && ./build
+      - name: Upload jacktrip
+        uses: actions/upload-artifact@v2
+        with:
+          name: jacktrip
+          path: ./builddir/jacktrip
+          retention-days: 30
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          repository: kltdwrds/jackjam
+          ref: ${{ github.event.inputs.ref }}
+      - name: Copy jacktrip into jackjam
+        uses: actions/download-artifact@v2
+        with:
+          name: jacktrip
+          path: ./resources/executables
+      - name: Use Node.js v12.10.0
+        uses: actions/setup-node@v1
+        with:
+          node-version: v12.10.0
+      - name: Install jackjam deps
+        run: |
+          npm install
+      - name: Build jackjam
+        run: |
+          npm run dist
+      - name: Get timestamp
+        id: timestamp
+        run: echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M%S')"
+      - name: Get package.json version
+        id: version
+        run: echo "::set-output name=version::$(npm run version)"
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.timestamp.outputs.timestamp }}
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/jackjam-client-${{ steps.version.outputs.version }}-mac.zip
+          asset_name: jackjam-client-${{ steps.version.outputs.version }}-mac.zip
+          asset_content_type: application/octet-stream
