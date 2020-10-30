@@ -1,18 +1,16 @@
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-# This workflow will install Deno and run tests across stable and nightly builds on Windows, Ubuntu and macOS.
-# For more information see: https://github.com/denolib/setup-deno
-
 name: jacktrip
 
 on:
+  push:
+    branches: [kltdwrds-patch-1]
   workflow_dispatch:
     inputs:
       ref:
-        description: "jacktrip branch"
+        description: "ref"
+        required: true
+        default: "master"
+      jacktrip-ref:
+        description: "jacktrip ref"
         required: true
         default: "main"
 
@@ -23,17 +21,45 @@ jobs:
       - name: Install jacktrip deps
         run: |
           sudo apt-get install -y --no-install-recommends build-essential librtaudio-dev qt5-default autoconf automake libtool make libjack-jackd2-dev qjackctl audacity git
+      - name: Checkout jacktrip
+        uses: actions/checkout@v2
+        with:
+          repository: jacktrip/jacktrip
+          ref: ${{ github.event.inputs.jacktrip-ref }}
+      - name: Build jacktrip
+        run: |
+          cd ./src && ./build
+      - name: Upload jacktrip
+        uses: actions/upload-artifact@v2
+        with:
+          name: jacktrip
+          path: ./builddir/jacktrip
       - name: Checkout code
         uses: actions/checkout@v2
-        with: 
-          repository: jacktrip/jacktrip
+        with:
+          repository: kltdwrds/jackjam
           ref: ${{ github.event.inputs.ref }}
-      - name: Build dist
+      - name: Copy jacktrip into jackjam
+        uses: actions/download-artifact@v2
+        with:
+          name: jacktrip
+          path: ./resources/
+      - name: Use Node.js v12.10.0
+        uses: actions/setup-node@v1
+        with:
+          node-version: v12.10.0
+      - name: Install jackjam deps
         run: |
-          cd ./src && ./build && pwd
+          npm install
+      - name: Build jackjam
+        run: |
+          npm run dist
       - name: Get timestamp
         id: timestamp
         run: echo "::set-output name=timestamp::$(date +'%Y%m%d%H%M%S')"
+      - name: Get package.json version
+        id: version
+        run: echo "::set-output name=version::$(npm run version)"
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -47,6 +73,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./builddir/jacktrip
-          asset_name: jacktrip
+          asset_path: ./dist/jackjam-client-${{ steps.version.outputs.version }}-mac.zip
+          asset_name: jackjam-client-${{ steps.version.outputs.version }}-mac.zip
           asset_content_type: application/octet-stream
