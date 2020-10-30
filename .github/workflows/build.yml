@@ -2,7 +2,7 @@ name: jacktrip
 
 on:
   push:
-    branches: [master]
+    branches: [kltdwrds-patch-2]
   workflow_dispatch:
     inputs:
       ref:
@@ -16,11 +16,13 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-10.15
     steps:
       - name: Install jacktrip deps
         run: |
-          sudo apt-get install -y --no-install-recommends build-essential librtaudio-dev qt5-default autoconf automake libtool make libjack-jackd2-dev qjackctl audacity git
+          brew install qjackctl
+          brew install qt5
+          brew link qt5 --force
       - name: Checkout jacktrip
         uses: actions/checkout@v2
         with:
@@ -68,6 +70,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ steps.timestamp.outputs.timestamp }}
+          prerelease: true
+          draft: false
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1.0.2
         env:
