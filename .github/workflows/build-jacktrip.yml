@@ -1,4 +1,4 @@
-name: jacktrip
+name: Build jacktrip
 
 on:
   workflow_dispatch:
