@@ -1,7 +1,11 @@
+# npm
 node_modules
-build
+
+# build
 dist
+
+# misc
+.venv/
+.env
 **/.DS_Store
 .DS_Store
-
-.venv/

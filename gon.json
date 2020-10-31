@@ -1,0 +1,17 @@
+{
+  "source": ["./jacktrip"],
+  "bundle_id": "com.rebelheaded.jacktrip",
+  "apple_id": {
+    "password": "@env:AC_PASSWORD"
+  },
+  "sign": {
+    "application_identity": "D04A8A4FFC195C35157E42FFF2664CEBD8C3087B"
+  },
+  "dmg": {
+    "output_path": "jacktrip.dmg",
+    "volume_name": "Jacktrip"
+  },
+  "zip": {
+    "output_path": "jacktrip.zip"
+  }
+}

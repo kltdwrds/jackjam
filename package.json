@@ -18,6 +18,14 @@
   "browserslist": "Electron 9.2",
   "main": "dist/main.js",
   "build": {
+    "appId": "com.rebelheaded.jackjam",
+    "mac": {
+      "hardenedRuntime": true,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "darkModeSupport": true,
+      "category": "public.app-category.music"
+    },
     "files": [
       "dist/**/*",
       "package.json"
@@ -31,10 +39,7 @@
         ]
       }
     ],
-    "appId": "com.jackjam",
-    "mac": {
-      "category": "public.app-category.music"
-    }
+    "afterSign": "build/notarize.js"
   },
   "scripts": {
     "dev": "nodemon --watch webpack.config.js --exec \"webpack serve --mode development\"",
@@ -85,6 +90,7 @@
     "dotenv-webpack": "^3.0.0",
     "electron": "^10.1.5",
     "electron-builder": "^22.9.1",
+    "electron-notarize": "^1.0.0",
     "eslint": "^7.12.1",
     "eslint-config-airbnb": "^18.2.0",
     "eslint-config-prettier": "^6.15.0",

@@ -26,8 +26,19 @@ jobs:
       - name: Install jackjam deps
         run: |
           npm install
+      - name: Import codesign certs
+        uses: apple-actions/import-codesign-certs@v1
+        with:
+          p12-file-base64: ${{ secrets.APPLE_DEV_P12 }}
+          p12-password: ${{ secrets.APPLE_DEV_P12_PASSWORD }}
+          keychain: temp_keychain
       - name: Build jackjam
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_LINK: ${{ secrets.APPLE_DEV_P12 }}
+          CSC_KEY_PASSWORD: ${{ secrets.APPLE_DEV_P12_PASSWORD }}
+          CSC_KEYCHAIN: temp_keychain
+          AC_USERNAME: edwards.ky1@gmail.com
+          AC_PASSWORD: ${{ secrets.AC_PASSWORD }}
         run: |
           npm run dist
