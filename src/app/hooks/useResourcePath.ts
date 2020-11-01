@@ -1,9 +1,7 @@
 import * as path from "path";
 
-const isDevelopment = process.env.APP_ENV === "development";
-
 const useResourcePath = (relativePath: string): string => {
-  if (isDevelopment) {
+  if (process.env.APP_ENV === "development") {
     return path.join(path.resolve(), `resources`, relativePath);
   }
   return path.join(process.resourcesPath, relativePath);

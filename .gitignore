@@ -3,9 +3,11 @@ node_modules
 
 # build
 dist
+.env
 
 # misc
 .venv/
-.env
 **/.DS_Store
 .DS_Store
+jacktrip.dmg
+jacktrip.zip

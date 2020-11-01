@@ -1,19 +1,17 @@
 import { app, BrowserWindow } from "electron";
 
-const isDevelopment = process.env.APP_ENV === "development";
-
 // global reference to mainWindow (necessary to prevent window from being garbage collected)
 let mainWindow;
 
 function createWindow(): void {
   mainWindow = new BrowserWindow({
     height: 600,
-    webPreferences: { nodeIntegration: true },
     width: 800,
+    webPreferences: { nodeIntegration: true },
   });
 
   mainWindow.webContents.openDevTools();
-  if (isDevelopment) {
+  if (process.env.APP_ENV === "development") {
     mainWindow.loadURL(`http://localhost:3000/index.html`);
   } else {
     mainWindow.loadFile("dist/index.html");

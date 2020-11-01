@@ -1,9 +1,8 @@
 const path = require('path');
-const {spawn} = require('child_process');
+const { spawn } = require('child_process');
 const { merge } = require('webpack-merge');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const DotenvWebpackPlugin = require("dotenv-webpack");
 
 var DIST_DIR = path.resolve(__dirname, 'dist');
 // var SRC_DIR = path.resolve(__dirname, 'src');
@@ -12,7 +11,7 @@ module.exports = (env, argv) => {
   const mode = argv.mode
   const productionBuild = mode === 'production';
   const base = {
-    mode: mode,
+    mode,
     devtool: productionBuild ? 'source-map' : 'eval-source-map',
     resolve: {
       extensions: ['.tsx', '.ts', '.js'],
@@ -27,49 +26,44 @@ module.exports = (env, argv) => {
           test: /\.ts(x?)$/,
           exclude: /node_modules/,
           loader: "babel-loader",
-          resolve: {
-            fullySpecified: false
-          }
         },
         // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
         {
           enforce: "pre",
           test: /\.js$/,
           loader: "source-map-loader",
-          resolve: {
-            fullySpecified: false
-          }
         }
       ]
     },
     output: {
       path: DIST_DIR,
     },
-    plugins: [
-      new DotenvWebpackPlugin({path: productionBuild ? "./.env.production" : "./.env"})
-    ]
   }
 
   const electron = {
-    entry: './src/main.ts',
+    entry: {
+      main: './src/main.ts',
+    },
+    output: {
+      filename: '[name].js'
+    },
     target: 'electron-main',
     optimization: {
       nodeEnv: 'electron'
-    },
-    output: {
-      filename: 'main.js'
     },
     plugins: [new CleanWebpackPlugin()],
   }
    
   const react = {
-    entry: './src/renderer.tsx',
+    entry: {
+      renderer: './src/renderer.tsx',
+    },
+    output: {
+      filename: '[name].js'
+    },
     target: 'electron-renderer',
     optimization: {
       nodeEnv: 'web'
-    },
-    output: {
-      filename: 'renderer.js'
     },
     plugins: [
       new HtmlWebpackPlugin({
@@ -87,7 +81,7 @@ module.exports = (env, argv) => {
           { shell: true, env: process.env, stdio: 'inherit' }
         )
         .on('close', code => process.exit(0))
-        .on('error', spawnError => console.error(spawnError))
+        .on('error', error => console.error(error))
       }
     }
   }
