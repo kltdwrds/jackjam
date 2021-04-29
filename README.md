@@ -1,5 +1,9 @@
 # JackJam electon client
 
+Note: This version requires libjack to be installed separately before connecting to the hub server.
+
+See https://ccrma.stanford.edu/software/jacktrip/osx/index.html - YMMV
+
 ## To Use
 
 To clone and run this repository you'll need [Git](https://git-scm.com) and [Node.js](https://nodejs.org/en/download/) (which comes with [npm](http://npmjs.com)) installed on your computer. From your command line:
